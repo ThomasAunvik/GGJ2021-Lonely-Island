@@ -268,7 +268,9 @@ MonoBehaviour:
   DamageMax: 10
   DamageMin: 1
   DamageMultiplier: 1
+  IsAttacking: 0
   GlobalCooldown: 0.2
+  DamageTakenCountPrefab: {fileID: 324789889686424382, guid: a05ad4643de428b4daf72eb0ed5604c7, type: 3}
   animationController: {fileID: 8496047332369554360}
   characterCamera: {fileID: 0}
   charController: {fileID: 8496047332369554362}

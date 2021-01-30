@@ -41,6 +41,14 @@ namespace LonelyIsland.System
 
         }
 
+        public bool UseMoney(int money)
+        {
+            if (save.Coins - money < 0) return false;
+
+            save.Coins -= money;
+            return true;
+        }
+
         public void ResetSave()
         {
             save = new Save();

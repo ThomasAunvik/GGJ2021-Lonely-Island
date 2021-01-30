@@ -42,10 +42,14 @@ namespace LonelyIsland.Characters
         [SerializeField] protected bool IsAttacking = false;
         [SerializeField] protected float GlobalCooldown = 1;
         [SerializeField] protected GameObject DamageTakenCountPrefab;
+        [SerializeField] protected Vector3 PrefabOffset;
         protected float globalCooldownPeriod = 0;
 
         [Header("Animation")]
         [SerializeField] protected Animator animationController;
+
+        public delegate void Death();
+        public static event Death OnDeath;
 
         protected float health;
         protected virtual float SetHealth(float newHealth) { return health = Mathf.Clamp(newHealth, HealthMin, TotalMaxHealth); }
@@ -75,6 +79,15 @@ namespace LonelyIsland.Characters
         public virtual float TakeDamage(float damage)
         {
             Debug.Log(gameObject.name + " took damage: " + damage, gameObject);
+
+            if (DamageTakenCountPrefab != null) {
+                GameObject obj = Instantiate(DamageTakenCountPrefab, transform.position + PrefabOffset, transform.rotation);
+                NumberPopup popup = obj.GetComponent<NumberPopup>();
+                popup.SetNumberText(damage);
+            }
+            float newHp = Health - damage;
+            if (newHp <= 0) OnDeath();
+
             return SetHealth(Health - damage);
         }
 

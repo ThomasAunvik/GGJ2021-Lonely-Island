@@ -16,7 +16,7 @@ namespace LonelyIsland.Characters
         
 
         public override float Damage { get { return GameManager.Instance.Stats.Damage * DamageMultiplier; } }
-        public override float TotalMaxHealth { get { return GameManager.Instance.Stats.Health * HealthMultiplier * health; } }
+        public override float TotalMaxHealth { get { return GameManager.Instance.Stats.Health * HealthMultiplier; } }
         public override float TotalMaxDamage { get { return GameManager.Instance.Stats.Damage * DamageMultiplier; } }
 
         private void Awake()
@@ -50,7 +50,7 @@ namespace LonelyIsland.Characters
         }
 
         protected override float SetHealth(float newHealth) { 
-            float health = Mathf.Clamp(newHealth, HealthMin, TotalMaxHealth);
+            health = Mathf.Clamp(newHealth, HealthMin, TotalMaxHealth);
             GameManager.Instance.Save.Health = health;
             return health;
         }
@@ -92,6 +92,7 @@ namespace LonelyIsland.Characters
         {
             if (GameManager.Instance == null) return;
 
+            GameManager.Instance.Save.Health = health;
             GameManager.Instance.Save.Position = new SerializedVector3(transform.position);
         }
 

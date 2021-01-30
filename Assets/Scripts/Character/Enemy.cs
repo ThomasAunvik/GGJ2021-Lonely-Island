@@ -8,6 +8,16 @@ namespace LonelyIsland.Characters
 {
     public class Enemy : Character
     {
+        
 
+        private void Awake()
+        {
+            OnDeath += Died;
+        }
+
+        private void Died()
+        {
+
+        }
     }
 }

@@ -1,3 +1,4 @@
+using LonelyIsland.Character;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace LonelyIsland.System
 
         public int firstScene = 1;
         private Save save = null;
+
+        public Stats Stats { get { return save.Stats; } }
 
         private void Awake()
         {

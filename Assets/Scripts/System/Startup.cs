@@ -15,6 +15,6 @@ namespace LonelyIsland.System {
             StarupSceneIndex = startupIndex;
 
             SceneManager.LoadScene(0);
-    }
+        }
     }
 }

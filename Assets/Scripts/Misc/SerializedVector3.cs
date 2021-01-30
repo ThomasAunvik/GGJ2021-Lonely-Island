@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using UnityEngine;
 
 namespace LonelyIsland.Misc
 {
+    [Serializable]
     public class SerializedVector3
     {
         public SerializedVector3() { }
@@ -24,6 +26,7 @@ namespace LonelyIsland.Misc
         public float Y { get; set; }
         public float Z { get; set; }
 
+        [JsonIgnore]
         public Vector3 Vector3 { get { return new Vector3(X, Y, Z); } }
         
     }

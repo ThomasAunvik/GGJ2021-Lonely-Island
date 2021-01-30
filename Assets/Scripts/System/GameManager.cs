@@ -1,20 +1,23 @@
-using LonelyIsland.Character;
+using LonelyIsland.Characters;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Newtonsoft.Json;
 
 namespace LonelyIsland.System
 {
     public class GameManager : MonoBehaviour
     {
-        public static GameManager _instance;
+        private static GameManager _instance;
+        public static GameManager Instance { get { return _instance; } }
 
         public int firstScene = 1;
         private Save save = null;
 
+        public Save Save { get { return save; } }
         public Stats Stats { get { return save.Stats; } }
 
         private void Awake()
@@ -38,7 +41,13 @@ namespace LonelyIsland.System
 
         }
 
-        private void SaveGame()
+        public void ResetSave()
+        {
+            save = new Save();
+            SaveGame();
+        }
+
+        public void SaveGame()
         {
             try
             {
@@ -53,7 +62,7 @@ namespace LonelyIsland.System
                 string fileName = "save.json";
                 string filePath = Path.Combine(directory, fileName);
 
-                string json = JsonUtility.ToJson(save, true);
+                string json = JsonConvert.SerializeObject(save, Formatting.Indented);
                 File.WriteAllText(filePath, json);
             }
             catch (Exception e)
@@ -73,7 +82,7 @@ namespace LonelyIsland.System
                 string filePath = Path.Combine(directory, fileName);
 
                 string json = File.ReadAllText(filePath);
-                return JsonUtility.FromJson<Save>(json);
+                return JsonConvert.DeserializeObject<Save>(json);
             }
             catch (Exception e)
             {

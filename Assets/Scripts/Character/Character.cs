@@ -1,7 +1,7 @@
 ﻿using LonelyIsland.System;
 using UnityEngine;
 
-namespace LonelyIsland.Character
+namespace LonelyIsland.Characters
 {
     public interface ICharacter
     {
@@ -9,10 +9,25 @@ namespace LonelyIsland.Character
         public float Damage { get; }
         public float TotalMaxHealth { get; }
         public float TotalMaxDamage { get; }
+        public float TakeDamage(float damage);
+        public void Attack(ICharacter[] characters);
     }
 
     public class Character : MonoBehaviour, ICharacter
     {
+        [Header("Movement")]
+        [SerializeField] protected float MovementSpeed = 1;
+        [SerializeField] protected float MovementSprintSpeed = 2;
+        [SerializeField] protected float RotateSpeed = 1;
+        [SerializeField] protected float RotateSprintSpeed = 1;
+        [SerializeField] protected float JumpForce = 1;
+        [SerializeField] protected float Gravity = -1;
+        protected Vector3 Velocity;
+
+        [SerializeField] protected bool Sprint = false;
+        [SerializeField] protected bool ToggleSpring = false;
+        protected bool IsSprinting { get { return Sprint || ToggleSpring; } }
+
         [Header("Health")]
         [SerializeField] protected float HealthMax = 100;
         [SerializeField] protected float HealthMin = 0;
@@ -22,6 +37,15 @@ namespace LonelyIsland.Character
         [SerializeField] protected float DamageMax = 10;
         [SerializeField] protected float DamageMin = 1;
         [SerializeField] protected float DamageMultiplier = 1;
+
+        [Header("Attack")]
+        [SerializeField] protected bool IsAttacking = false;
+        [SerializeField] protected float GlobalCooldown = 1;
+        [SerializeField] protected GameObject DamageTakenCountPrefab;
+        protected float globalCooldownPeriod = 0;
+
+        [Header("Animation")]
+        [SerializeField] protected Animator animationController;
 
         protected float health;
         protected virtual float SetHealth(float newHealth) { return health = Mathf.Clamp(newHealth, HealthMin, TotalMaxHealth); }
@@ -34,6 +58,33 @@ namespace LonelyIsland.Character
         private void Start()
         {
             SetHealth(TotalMaxHealth);
+        }
+
+        public virtual void Attack(params ICharacter[] characters)
+        {
+            if(!IsAttacking) return;
+
+            for(int charIndex = 0; charIndex < characters.Length; charIndex++)
+            {
+                float takenDamage = TotalMaxDamage;
+                ICharacter character = characters[charIndex];
+                character.TakeDamage(takenDamage);
+            }
+        }
+
+        public virtual float TakeDamage(float damage)
+        {
+            Debug.Log(gameObject.name + " took damage: " + damage, gameObject);
+            return SetHealth(Health - damage);
+        }
+
+        protected virtual void SetIsAttacking()
+        {
+            IsAttacking = true;
+        }
+        protected virtual void SetIsNotAttacking()
+        {
+            IsAttacking = false;
         }
     }
 }

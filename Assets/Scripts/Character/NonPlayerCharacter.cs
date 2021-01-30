@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LonelyIsland.Character
+namespace LonelyIsland.Characters
 {
     public class NonPlayerCharacter : Character
     {

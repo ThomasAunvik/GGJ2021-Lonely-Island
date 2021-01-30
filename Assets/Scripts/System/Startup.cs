@@ -11,7 +11,7 @@ namespace LonelyIsland.System {
 
         void Start()
         {
-            if (GameManager._instance) return;
+            if (GameManager.Instance) return;
             StarupSceneIndex = startupIndex;
 
             SceneManager.LoadScene(0);

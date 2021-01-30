@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using LonelyIsland.UI;
 using System.Linq;
 using LonelyIsland.System;
+using System;
 
 namespace LonelyIsland.NPC
 {
@@ -42,6 +43,13 @@ namespace LonelyIsland.NPC
             }
 
             SelectablePurchases.Clear();
+
+            purchasableItems.Sort((a, b) =>
+                Enum.GetName(typeof(PurchasableItemTypes), a.itemType).CompareTo(
+                    Enum.GetName(typeof(PurchasableItemTypes), b.itemType)
+                )
+            );
+
             for (int i = 0; i < purchasableItems.Count; i++)
             {
                 if (!purchasableItems[i].MeetsRequirements()) { continue; }
@@ -54,19 +62,23 @@ namespace LonelyIsland.NPC
 
             if (SelectablePurchases.Count > 0)
             {
+                if (selectedPurchase >= SelectablePurchases.Count)
+                    selectedPurchase = SelectablePurchases.Count - 1;
+
                 SelectablePurchases[selectedPurchase].SetIsSelected(true);
             }
         }
 
         private void Update()
         {
+            if (!SelectablePurchases.All(x => purchasableItems.Any(y => y.itemId == x.GetItem().itemId && y.MeetsRequirements())))
+            {
+                GenerateItems();
+            }
+
             bool isInRange = (transform.position - player.transform.position).magnitude <= viewUIRange;
             merchantCanvas.gameObject.SetActive(isInRange);
             playerInput.enabled = isInRange;
-
-            if(!SelectablePurchases.All(x => purchasableItems.Any(y => y.itemId == x.GetItem().itemId && y.MeetsRequirements()))) {
-                GenerateItems();
-            }
         }
 
         public void OnScroll(InputAction.CallbackContext ctx)

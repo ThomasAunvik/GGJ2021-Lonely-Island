@@ -1,4 +1,5 @@
-﻿using LonelyIsland.System;
+﻿using LonelyIsland.Misc;
+using LonelyIsland.System;
 using UnityEngine;
 
 namespace LonelyIsland.Characters
@@ -29,6 +30,8 @@ namespace LonelyIsland.Characters
         protected bool IsSprinting { get { return Sprint || ToggleSpring; } }
 
         [Header("Health")]
+        [ReadOnly]
+        [SerializeField] protected float health;
         [SerializeField] protected float HealthMax = 100;
         [SerializeField] protected float HealthMin = 0;
         [SerializeField] protected float HealthMultiplier = 1;
@@ -48,10 +51,6 @@ namespace LonelyIsland.Characters
         [Header("Animation")]
         [SerializeField] protected Animator animationController;
 
-        public delegate void Death();
-        public static event Death OnDeath;
-
-        protected float health;
         protected virtual float SetHealth(float newHealth) { return health = Mathf.Clamp(newHealth, HealthMin, TotalMaxHealth); }
         public virtual float Health { get { return health; } }
         public virtual float Damage { get { return DamageMultiplier; } }
@@ -62,6 +61,11 @@ namespace LonelyIsland.Characters
         private void Start()
         {
             SetHealth(TotalMaxHealth);
+        }
+
+        private void Update()
+        {
+            if (health <= 0) Died();
         }
 
         public virtual void Attack(params ICharacter[] characters)
@@ -86,9 +90,9 @@ namespace LonelyIsland.Characters
                 popup.SetNumberText(damage);
             }
             float newHp = Health - damage;
-            if (newHp <= 0) OnDeath();
+            SetHealth(newHp);
 
-            return SetHealth(Health - damage);
+            return newHp;
         }
 
         protected virtual void SetIsAttacking()
@@ -98,6 +102,11 @@ namespace LonelyIsland.Characters
         protected virtual void SetIsNotAttacking()
         {
             IsAttacking = false;
+        }
+
+        protected virtual void Died()
+        {
+            Debug.Log("Death");
         }
     }
 }

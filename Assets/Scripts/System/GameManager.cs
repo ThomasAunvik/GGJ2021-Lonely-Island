@@ -29,6 +29,11 @@ namespace LonelyIsland.System
             SceneManager.sceneLoaded += SceneLoaded;
 
             save = LoadGame();
+            LoadFirstScene();
+        }
+
+        private void LoadFirstScene()
+        {
             if (SceneManager.sceneCount == 1)
             {
                 int startupScene = Startup.StarupSceneIndex == 0 ? firstScene : Startup.StarupSceneIndex;
@@ -53,6 +58,9 @@ namespace LonelyIsland.System
         {
             save = new Save();
             SaveGame();
+
+            int startupScene = Startup.StarupSceneIndex == 0 ? firstScene : Startup.StarupSceneIndex;
+            SceneManager.LoadScene(startupScene, LoadSceneMode.Single);
         }
 
         public void SaveGame()

@@ -106,21 +106,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sphere
       objectReference: {fileID: 0}
+    - target: {fileID: 6919906506613562660, guid: a9d6100b7999d69498e6a8bd9f1aefb0, type: 3}
+      propertyPath: PrefabOffset.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6919906506613562661, guid: a9d6100b7999d69498e6a8bd9f1aefb0, type: 3}
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6919906506613562661, guid: a9d6100b7999d69498e6a8bd9f1aefb0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -5.628
       objectReference: {fileID: 0}
     - target: {fileID: 6919906506613562661, guid: a9d6100b7999d69498e6a8bd9f1aefb0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.65
       objectReference: {fileID: 0}
     - target: {fileID: 6919906506613562661, guid: a9d6100b7999d69498e6a8bd9f1aefb0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 2.41
       objectReference: {fileID: 0}
     - target: {fileID: 6919906506613562661, guid: a9d6100b7999d69498e6a8bd9f1aefb0, type: 3}
       propertyPath: m_LocalRotation.w

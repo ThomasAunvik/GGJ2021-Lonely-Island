@@ -12,6 +12,8 @@ namespace LonelyIsland.Characters
         public float TotalMaxDamage { get; }
         public float TakeDamage(float damage);
         public void Attack(ICharacter[] characters);
+
+        public bool IsDead();
     }
 
     public class Character : MonoBehaviour, ICharacter
@@ -48,6 +50,9 @@ namespace LonelyIsland.Characters
         [SerializeField] protected Vector3 PrefabOffset;
         protected float globalCooldownPeriod = 0;
 
+        protected bool hasDied = false;
+        public bool IsDead() { return hasDied;  }
+
         [Header("Animation")]
         [SerializeField] protected Animator animationController;
 
@@ -58,15 +63,29 @@ namespace LonelyIsland.Characters
         public virtual float TotalMaxHealth { get { return HealthMax; } }
         public virtual float TotalMaxDamage { get { return HealthMin; } }
 
-        private void Start()
+        protected virtual void Awake()
+        {
+            
+        }
+
+        protected virtual void Start()
         {
             if (GameManager.Instance == null) return;
             SetHealth(TotalMaxHealth);
         }
 
-        private void Update()
+        protected virtual void Update()
         {
-            if (health <= 0) Died();
+            if(transform.position.y <= -20)
+            {
+                SetHealth(0);
+            }
+
+            if (health <= 0 && !hasDied)
+            {
+                hasDied = true;
+                Died();
+            }
         }
 
         public virtual void Attack(params ICharacter[] characters)

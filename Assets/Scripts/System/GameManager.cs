@@ -79,8 +79,7 @@ namespace LonelyIsland.System
             save = new Save();
             SaveGame(false);
 
-            int startupScene = Startup.StarupSceneIndex == 0 ? firstScene : Startup.StarupSceneIndex;
-            SceneManager.LoadScene(startupScene, LoadSceneMode.Single);
+            SceneManager.LoadScene(firstScene, LoadSceneMode.Single);
         }
 
         public void SaveGame(bool isReset = false)

@@ -1,5 +1,6 @@
 ﻿using LonelyIsland.Misc;
 using LonelyIsland.System;
+using LonelyIsland.UI;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,13 +16,16 @@ namespace LonelyIsland.Characters
         [SerializeField] private CharacterController charController;
 
         [SerializeField] private Transform SpawnPoint;
+        [SerializeField] private MainMenu mainMenu;
 
         public override float Damage { get { return GameManager.Instance.Stats.Damage * DamageMultiplier; } }
         public override float TotalMaxHealth { get { return GameManager.Instance.Stats.Health * HealthMultiplier; } }
         public override float TotalMaxDamage { get { return GameManager.Instance.Stats.Damage * DamageMultiplier; } }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             InitControls();
 
             if (characterCamera == null)
@@ -59,8 +63,10 @@ namespace LonelyIsland.Characters
             return health;
         }
 
-        private void Update()
+        protected override void Update()
         {
+            base.Update();
+
             if (controls == null)
                 InitControls();
 
@@ -145,6 +151,12 @@ namespace LonelyIsland.Characters
             if (globalCooldownPeriod > 0) return;
             animationController.SetTrigger("Attack");
             globalCooldownPeriod = GlobalCooldown;
+        }
+
+        protected override void Died()
+        {
+            mainMenu.gameObject.SetActive(true);
+            base.Died();
         }
     }
 }

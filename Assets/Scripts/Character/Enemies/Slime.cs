@@ -1,4 +1,5 @@
 using LonelyIsland.Characters;
+using LonelyIsland.System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +17,6 @@ namespace LonelyIsland.Characters
 
         bool isInBattle = false;
         bool canAttack = true;
-        bool isAlive = true;
 
         [SerializeField] User player;
 
@@ -32,10 +32,6 @@ namespace LonelyIsland.Characters
 
         [SerializeField] ParticleSystem particleSys;
 
-        void Update()
-        {
-            if (health <= 0 && isAlive) Die();
-        }
 
         // Update is called once per frame
         void FixedUpdate()
@@ -79,7 +75,7 @@ namespace LonelyIsland.Characters
             rb.velocity = new Vector3(-x * MovementSpeed * Time.deltaTime, rb.velocity.y, -z * MovementSpeed * Time.deltaTime);
         }
 
-        void Die()
+        protected override void Died()
         {
             int random = Random.Range(0, 4);
             audioSource.clip = deathClips[random];
@@ -87,7 +83,7 @@ namespace LonelyIsland.Characters
             audioSource.Play();
             animator.Play("Die");
             particleSys.Play();
-            isAlive = false;
+            GameManager.Instance.Save.Coins += coinLoot;
             Destroy(gameObject, 2f);
         }
 

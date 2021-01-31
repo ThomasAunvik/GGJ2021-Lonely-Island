@@ -12,6 +12,14 @@ namespace LonelyIsland.UI
     {
         [SerializeField] private Button ContinueButton;
         [SerializeField] private Button NewGameButton;
+        [SerializeField] private TMPro.TMP_Text welcomeText;
+
+        [SerializeField] private string welcomeString;
+        [SerializeField] private string diedString;
+
+        [SerializeField] private Color blackColor = Color.black;
+        [SerializeField] private Color deadColor = Color.red;
+
         [SerializeField] private GameUI gameUI;
         [SerializeField] private User user;
         [SerializeField] private Camera viewCamera;
@@ -24,7 +32,7 @@ namespace LonelyIsland.UI
             ContinueButton.onClick.AddListener(OnContinueButtonClick);
             NewGameButton.onClick.AddListener(OnNewGameButtonClick);
 
-            bool viewUI = !GameManager.Instance.Teleporting && GameManager.Instance.GetIsFirstSave();
+            bool viewUI = (!GameManager.Instance.Teleporting && GameManager.Instance.GetIsFirstSave()) || user.IsDead();
 
             gameObject.SetActive(viewUI);
             gameUI.gameObject.SetActive(!viewUI);
@@ -38,9 +46,22 @@ namespace LonelyIsland.UI
         {
             if(!GameManager.Instance) return;
 
-            if (!GameManager.Instance.firstSave)
+            if (!GameManager.Instance.firstSave || user.IsDead())
             {
                 ContinueButton.gameObject.SetActive(false);
+            }
+
+            welcomeText.text = user.IsDead() ? diedString : welcomeString;
+            welcomeText.color = user.IsDead() ? deadColor : blackColor;
+
+            if (user.IsDead())
+            {
+                gameObject.SetActive(true);
+                gameUI.gameObject.SetActive(false);
+                user.gameObject.SetActive(false);
+
+                viewCamera.gameObject.SetActive(true);
+                mainCamera.gameObject.SetActive(false);
             }
         }
 

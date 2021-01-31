@@ -7,11 +7,11 @@ using UnityEngine;
 public class UIWorldLookAt : MonoBehaviour
 {
     private Canvas canvas;
-    private Camera mainCam;
+    [SerializeField] private Camera mainCam;
 
     private void Awake()
     {
-        mainCam = Camera.main;
+        if(mainCam == null) mainCam = Camera.main;
         canvas = GetComponent<Canvas>();
         canvas.worldCamera = mainCam;
     }

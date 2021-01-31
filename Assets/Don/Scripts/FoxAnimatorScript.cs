@@ -2,33 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FoxAnimationScript : MonoBehaviour
+namespace DON
 {
-    public Animator animator;
-
-    /* The objects we need scripts from */
-    // GameObject object;
-
-    /* The scripts we need variables from */
-    // ScriptName script; 
-
-
-    void Start()
+    public class FoxAnimationScript : MonoBehaviour
     {
-        // object = GameObject.FindWithTag("Tag");
+        public Animator animator;
 
-        // script = object.GetComponent<ScriptName>();
-    }
+        /* The objects we need scripts from */
+        // GameObject object;
+
+        /* The scripts we need variables from */
+        // ScriptName script; 
 
 
-    void Update()
-    {
-        // Vector3 movement = script.AReturnMovementFunction();
+        void Start()
+        {
+            // object = GameObject.FindWithTag("Tag");
 
-        // animator.SetFloat("Speed", movement.sqrMagnitude);
+            // script = object.GetComponent<ScriptName>();
+        }
 
-        // animator.SetBool("Jumping", script.ABool);
-        // animator.SetBool("InBattle", script.ABool);
-        // animator.SetBool("Attack", script.ABool);
+
+        void Update()
+        {
+            // Vector3 movement = script.AReturnMovementFunction();
+
+            // animator.SetFloat("Speed", movement.sqrMagnitude);
+
+            // animator.SetBool("Jumping", script.ABool);
+            // animator.SetBool("InBattle", script.ABool);
+            // animator.SetBool("Attack", script.ABool);
+        }
     }
 }

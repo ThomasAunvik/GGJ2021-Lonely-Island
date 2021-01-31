@@ -18,6 +18,11 @@ namespace LonelyIsland.Characters
         [SerializeField] private Transform SpawnPoint;
         [SerializeField] private MainMenu mainMenu;
 
+        [SerializeField] private float animationSpeed = 0.1f;
+        [SerializeField] private float animationSprintingSpeed = 0.5f;
+        [SerializeField] private float AttackTimer = 120;
+        private float hasBeenAttackedTimer;
+
         public override float Damage { get { return GameManager.Instance.Stats.Damage * DamageMultiplier; } }
         public override float TotalMaxHealth { get { return GameManager.Instance.Stats.Health * HealthMultiplier; } }
         public override float TotalMaxDamage { get { return GameManager.Instance.Stats.Damage * DamageMultiplier; } }
@@ -70,9 +75,13 @@ namespace LonelyIsland.Characters
             if (controls == null)
                 InitControls();
 
-            if (globalCooldownPeriod > 0)
+            if (globalCooldownPeriod >= 0)
             {
                 globalCooldownPeriod -= Time.deltaTime;
+            }
+            else
+            {
+                animationController.SetBool("Attack", false);
             }
 
             if (charController.isGrounded && Velocity.y < 0)
@@ -90,6 +99,12 @@ namespace LonelyIsland.Characters
 
             if (charController.isGrounded && pressedJump != 0)
                 Velocity.y += Mathf.Sqrt(JumpForce * -3.0f * Gravity);
+
+            if (hasBeenAttackedTimer >= 0)
+                hasBeenAttackedTimer -= Time.deltaTime;
+
+            animationController.SetBool("Jumping", !charController.isGrounded && Velocity.y > 0);
+            animationController.SetBool("InBattle", hasBeenAttackedTimer > 0);
 
             Velocity.y += Gravity * Time.deltaTime;
 
@@ -120,6 +135,10 @@ namespace LonelyIsland.Characters
 
         private Vector3 MoveToTarget(Vector3 targetVector)
         {
+            var aniSpeed = IsSprinting ? animationSprintingSpeed : animationSpeed;
+            if (targetVector.sqrMagnitude == 0) aniSpeed = 0;
+            animationController.SetFloat("Speed", aniSpeed);
+
             targetVector = Quaternion.Euler(0, characterCamera.gameObject.transform.eulerAngles.y, 0) * targetVector;
             charController.Move(targetVector * Time.deltaTime);
             return targetVector;
@@ -149,8 +168,17 @@ namespace LonelyIsland.Characters
         private void AttackButtonPressed(InputAction.CallbackContext obj)
         {
             if (globalCooldownPeriod > 0) return;
-            animationController.SetTrigger("Attack");
+            hasBeenAttackedTimer = AttackTimer;
+            animationController.SetBool("InBattle", hasBeenAttackedTimer > 0);
+            animationController.SetBool("Attack", true);
             globalCooldownPeriod = GlobalCooldown;
+        }
+
+        public override float TakeDamage(float damage)
+        {
+            hasBeenAttackedTimer = AttackTimer;
+            animationController.SetBool("InBattle", hasBeenAttackedTimer > 0);
+            return base.TakeDamage(damage);
         }
 
         protected override void Died()

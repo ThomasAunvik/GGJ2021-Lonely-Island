@@ -1,4 +1,5 @@
-﻿using LonelyIsland.System;
+﻿using LonelyIsland.Misc;
+using LonelyIsland.System;
 using UnityEngine;
 
 namespace LonelyIsland.Characters
@@ -29,6 +30,8 @@ namespace LonelyIsland.Characters
         protected bool IsSprinting { get { return Sprint || ToggleSpring; } }
 
         [Header("Health")]
+        [ReadOnly]
+        [SerializeField] protected float health;
         [SerializeField] protected float HealthMax = 100;
         [SerializeField] protected float HealthMin = 0;
         [SerializeField] protected float HealthMultiplier = 1;
@@ -42,12 +45,12 @@ namespace LonelyIsland.Characters
         [SerializeField] protected bool IsAttacking = false;
         [SerializeField] protected float GlobalCooldown = 1;
         [SerializeField] protected GameObject DamageTakenCountPrefab;
+        [SerializeField] protected Vector3 PrefabOffset;
         protected float globalCooldownPeriod = 0;
 
         [Header("Animation")]
         [SerializeField] protected Animator animationController;
 
-        protected float health;
         protected virtual float SetHealth(float newHealth) { return health = Mathf.Clamp(newHealth, HealthMin, TotalMaxHealth); }
         public virtual float Health { get { return health; } }
         public virtual float Damage { get { return DamageMultiplier; } }
@@ -58,6 +61,11 @@ namespace LonelyIsland.Characters
         private void Start()
         {
             SetHealth(TotalMaxHealth);
+        }
+
+        private void Update()
+        {
+            if (health <= 0) Died();
         }
 
         public virtual void Attack(params ICharacter[] characters)
@@ -75,7 +83,16 @@ namespace LonelyIsland.Characters
         public virtual float TakeDamage(float damage)
         {
             Debug.Log(gameObject.name + " took damage: " + damage, gameObject);
-            return SetHealth(Health - damage);
+
+            if (DamageTakenCountPrefab != null) {
+                GameObject obj = Instantiate(DamageTakenCountPrefab, transform.position + PrefabOffset, transform.rotation);
+                NumberPopup popup = obj.GetComponent<NumberPopup>();
+                popup.SetNumberText(damage);
+            }
+            float newHp = Health - damage;
+            SetHealth(newHp);
+
+            return newHp;
         }
 
         protected virtual void SetIsAttacking()
@@ -85,6 +102,11 @@ namespace LonelyIsland.Characters
         protected virtual void SetIsNotAttacking()
         {
             IsAttacking = false;
+        }
+
+        protected virtual void Died()
+        {
+            Debug.Log("Death");
         }
     }
 }

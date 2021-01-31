@@ -270,6 +270,96 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Merchant"",
+            ""id"": ""a854c55e-7b80-42aa-8ac5-619e24e58ac7"",
+            ""actions"": [
+                {
+                    ""name"": ""Scroll"",
+                    ""type"": ""Value"",
+                    ""id"": ""cc610a94-5a3e-494c-9a07-28baef39327b"",
+                    ""expectedControlType"": ""Analog"",
+                    ""processors"": """",
+                    ""interactions"": ""Tap""
+                },
+                {
+                    ""name"": ""Buy"",
+                    ""type"": ""Button"",
+                    ""id"": ""d71137e2-79c2-4935-a2f0-42b0ef748aa9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Tap""
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d07e935e-191c-4303-9d22-399a8872a8b6"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""5eea5fff-ef2b-4eb5-8993-897032a5f4a1"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""5c4c0d39-3a06-4872-a41b-91fcb7bf5500"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Controller"",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""eadf348b-dac3-4a3e-8e8e-9cbc30341c59"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Controller"",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a9eb33e8-a1e4-461b-a834-ba6737a0917e"",
+                    ""path"": ""<XInputController>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Controller"",
+                    ""action"": ""Buy"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""25a1df61-e6cd-4a18-bafd-aa28b41cc7a5"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Buy"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -309,6 +399,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_ToggleSpring = m_Player.FindAction("ToggleSpring", throwIfNotFound: true);
+        // Merchant
+        m_Merchant = asset.FindActionMap("Merchant", throwIfNotFound: true);
+        m_Merchant_Scroll = m_Merchant.FindAction("Scroll", throwIfNotFound: true);
+        m_Merchant_Buy = m_Merchant.FindAction("Buy", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -419,6 +513,47 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // Merchant
+    private readonly InputActionMap m_Merchant;
+    private IMerchantActions m_MerchantActionsCallbackInterface;
+    private readonly InputAction m_Merchant_Scroll;
+    private readonly InputAction m_Merchant_Buy;
+    public struct MerchantActions
+    {
+        private @PlayerControls m_Wrapper;
+        public MerchantActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Scroll => m_Wrapper.m_Merchant_Scroll;
+        public InputAction @Buy => m_Wrapper.m_Merchant_Buy;
+        public InputActionMap Get() { return m_Wrapper.m_Merchant; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(MerchantActions set) { return set.Get(); }
+        public void SetCallbacks(IMerchantActions instance)
+        {
+            if (m_Wrapper.m_MerchantActionsCallbackInterface != null)
+            {
+                @Scroll.started -= m_Wrapper.m_MerchantActionsCallbackInterface.OnScroll;
+                @Scroll.performed -= m_Wrapper.m_MerchantActionsCallbackInterface.OnScroll;
+                @Scroll.canceled -= m_Wrapper.m_MerchantActionsCallbackInterface.OnScroll;
+                @Buy.started -= m_Wrapper.m_MerchantActionsCallbackInterface.OnBuy;
+                @Buy.performed -= m_Wrapper.m_MerchantActionsCallbackInterface.OnBuy;
+                @Buy.canceled -= m_Wrapper.m_MerchantActionsCallbackInterface.OnBuy;
+            }
+            m_Wrapper.m_MerchantActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Scroll.started += instance.OnScroll;
+                @Scroll.performed += instance.OnScroll;
+                @Scroll.canceled += instance.OnScroll;
+                @Buy.started += instance.OnBuy;
+                @Buy.performed += instance.OnBuy;
+                @Buy.canceled += instance.OnBuy;
+            }
+        }
+    }
+    public MerchantActions @Merchant => new MerchantActions(this);
     private int m_KeyboardandMouseSchemeIndex = -1;
     public InputControlScheme KeyboardandMouseScheme
     {
@@ -444,5 +579,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnToggleSpring(InputAction.CallbackContext context);
+    }
+    public interface IMerchantActions
+    {
+        void OnScroll(InputAction.CallbackContext context);
+        void OnBuy(InputAction.CallbackContext context);
     }
 }

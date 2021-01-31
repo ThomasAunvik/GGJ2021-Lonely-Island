@@ -9,5 +9,9 @@ namespace LonelyIsland.Characters
     public class Enemy : Character
     {
 
+        protected override void Died()
+        {
+            Destroy(gameObject);
+        }
     }
 }

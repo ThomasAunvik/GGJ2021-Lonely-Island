@@ -15,6 +15,7 @@ namespace LonelyIsland.System
         public int Level { get; set; } = 1;
         public float Health { get; set; } = -1;
         public Stats Stats { get; set; } = new Stats();
+        public List<int> PurchasedItems = new List<int>();
 
         public SerializedVector3 Position { get; set; }
     }

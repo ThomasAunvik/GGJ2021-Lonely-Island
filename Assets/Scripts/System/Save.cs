@@ -17,6 +17,7 @@ namespace LonelyIsland.System
         public Stats Stats { get; set; } = new Stats();
         public List<int> PurchasedItems = new List<int>();
 
+        public int WorldIndex = -1;
         public SerializedVector3 Position { get; set; }
     }
 }

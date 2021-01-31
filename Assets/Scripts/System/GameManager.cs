@@ -15,10 +15,16 @@ namespace LonelyIsland.System
         public static GameManager Instance { get { return _instance; } }
 
         public int firstScene = 1;
+        public bool firstSave = true;
+        public bool resetSave = false;
         private Save save = null;
+
+        public bool GetIsFirstSave() { return firstSave || resetSave; }
 
         public Save Save { get { return save; } }
         public Stats Stats { get { return save.Stats; } }
+
+        public bool Teleporting = false;
 
         private void Awake()
         {
@@ -28,7 +34,9 @@ namespace LonelyIsland.System
             DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += SceneLoaded;
 
+            firstSave = true;
             save = LoadGame();
+
             LoadFirstScene();
         }
 
@@ -36,7 +44,8 @@ namespace LonelyIsland.System
         {
             if (SceneManager.sceneCount == 1)
             {
-                int startupScene = Startup.StarupSceneIndex == 0 ? firstScene : Startup.StarupSceneIndex;
+                int startupScene = save.WorldIndex == -1 ? firstScene : save.WorldIndex;
+                if (Startup.StarupSceneIndex != 0) startupScene = Startup.StarupSceneIndex;
                 SceneManager.LoadScene(startupScene, LoadSceneMode.Single);
             }
         }
@@ -56,17 +65,32 @@ namespace LonelyIsland.System
 
         public void ResetSave()
         {
+            resetSave = true;
+
             save = new Save();
-            SaveGame();
+            SaveGame(true);
 
             int startupScene = Startup.StarupSceneIndex == 0 ? firstScene : Startup.StarupSceneIndex;
             SceneManager.LoadScene(startupScene, LoadSceneMode.Single);
         }
 
-        public void SaveGame()
+        public void NewGame()
+        {
+            save = new Save();
+            SaveGame(false);
+
+            int startupScene = Startup.StarupSceneIndex == 0 ? firstScene : Startup.StarupSceneIndex;
+            SceneManager.LoadScene(startupScene, LoadSceneMode.Single);
+        }
+
+        public void SaveGame(bool isReset = false)
         {
             try
             {
+                if (!isReset) resetSave = false;
+
+                save.WorldIndex = SceneManager.GetActiveScene().buildIndex;
+
                 string directory = Path.Combine(Application.persistentDataPath, "Saves");
                 if (!Directory.Exists(directory))
                 {
@@ -103,8 +127,16 @@ namespace LonelyIsland.System
             catch (Exception e)
             {
                 Debug.LogError("Failed to load save file!\n" + e, this);
+                firstSave = true;
             }
             return new Save();
+        }
+
+        public void TeleportToWorld(int worldIndex)
+        {
+            Teleporting = true;
+
+            SceneManager.LoadScene(worldIndex);
         }
     }
 }

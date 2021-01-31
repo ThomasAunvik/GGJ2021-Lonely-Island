@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/GameManagerScene.unity
     guid: 3372eca6abf05ba42854c7c326861e15
   - enabled: 1
-    path: Assets/Scenes/Overworld.unity
+    path: Assets/Scenes/OVERWORLD.unity
     guid: e8b27b9381574b7479bba8c9087c9697
+  - enabled: 1
+    path: Assets/Scenes/TestSceneOliver.unity
+    guid: feba178a364035f4fa1c91d2091b60e7
   m_configObjects: {}

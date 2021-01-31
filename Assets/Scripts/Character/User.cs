@@ -13,7 +13,8 @@ namespace LonelyIsland.Characters
         [Header("Input")]
         public PlayerControls controls;
         [SerializeField] private CharacterController charController;
-        
+
+        [SerializeField] private Transform SpawnPoint;
 
         public override float Damage { get { return GameManager.Instance.Stats.Damage * DamageMultiplier; } }
         public override float TotalMaxHealth { get { return GameManager.Instance.Stats.Health * HealthMultiplier; } }
@@ -25,18 +26,7 @@ namespace LonelyIsland.Characters
 
             if (characterCamera == null)
                 characterCamera = Camera.main;
-        }
 
-        private void JumpButtonPerformed(InputAction.CallbackContext obj)
-        {
-            if (charController.isGrounded)
-            {
-                charController.Move(new Vector3(0, JumpForce, 0));
-            }
-        }
-
-        private void Start()
-        {
             if (GameManager.Instance == null) return;
 
             float newHealth = GameManager.Instance.Save.Health == -1 ? TotalMaxHealth : GameManager.Instance.Save.Health;
@@ -46,7 +36,21 @@ namespace LonelyIsland.Characters
                 GameManager.Instance.Save.Position.Vector3 :
                 transform.position;
 
+            if (GameManager.Instance.Teleporting)
+            {
+                GameManager.Instance.Teleporting = false;
+                newPosition = SpawnPoint.position;
+            }
+
             transform.position = newPosition;
+        }
+
+        private void JumpButtonPerformed(InputAction.CallbackContext obj)
+        {
+            if (charController.isGrounded)
+            {
+                charController.Move(new Vector3(0, JumpForce, 0));
+            }
         }
 
         protected override float SetHealth(float newHealth) { 

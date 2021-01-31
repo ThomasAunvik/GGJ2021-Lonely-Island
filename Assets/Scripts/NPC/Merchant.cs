@@ -24,12 +24,10 @@ namespace LonelyIsland.NPC
         private List<MerchantItem> SelectablePurchases = new List<MerchantItem>();
         private int selectedPurchase = 0;
 
-        private User player;
+        [SerializeField] private User player;
 
         private void Awake()
         {
-            player = FindObjectOfType<User>();
-
             GenerateItems();
         }
 

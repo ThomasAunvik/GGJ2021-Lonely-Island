@@ -60,6 +60,7 @@ namespace LonelyIsland.Characters
 
         private void Start()
         {
+            if (GameManager.Instance == null) return;
             SetHealth(TotalMaxHealth);
         }
 

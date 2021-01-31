@@ -11,7 +11,6 @@ namespace LonelyIsland.Characters
         [SerializeField] float lineOfSight = 10.0f;
         [SerializeField] float personalSpace = 2.0f;
         [SerializeField] float attackSpeed = 3.0f;
-        [SerializeField] float attackDamageDelay= 1.0f;
         [SerializeField] float attackReach = 5.0f;
         float distance;
 
@@ -104,11 +103,7 @@ namespace LonelyIsland.Characters
 
         public IEnumerator AttackDelay()
         {
-            yield return new WaitForSeconds(attackDamageDelay);
-
-            player.TakeDamage(Random.Range(DamageMin, DamageMax));
-
-            yield return new WaitForSeconds(attackSpeed - attackDamageDelay);
+            yield return new WaitForSeconds(attackSpeed);
             animator.ResetTrigger("attack");
             canAttack = true;
         }
@@ -123,6 +118,8 @@ namespace LonelyIsland.Characters
 
         void AtkAudioPlay()
         {
+            player.TakeDamage(Random.Range(DamageMin, DamageMax));
+
             int random = Random.Range(0, 3);
             audioSource.clip = atkClips[random];
             audioSource.pitch = Random.Range(0.95f, 1.05f);

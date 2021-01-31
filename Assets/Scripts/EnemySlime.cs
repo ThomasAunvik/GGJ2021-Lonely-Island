@@ -50,13 +50,13 @@ public class EnemySlime : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        //check if player is in range
+        //Check if player is in range
         distance = Vector3.Distance(gameObject.transform.position, player.transform.position);
         //Debug.Log("Distance " + distance + " LoS " + lineOfSight);
         isInBattle = (distance < lineOfSight) ? true : false;
         animator.SetBool("isInBattle", isInBattle);
 
-        Debug.Log("Distance " + distance + " personalSpace " + personalSpace + " attackReach " + attackReach);
+        //Debug.Log("Distance " + distance + " personalSpace " + personalSpace + " attackReach " + attackReach);
         if ((isInBattle) && (distance > personalSpace))
         {
             //raycast to check if there is a clear path to the player
@@ -103,7 +103,7 @@ public class EnemySlime : MonoBehaviour
 
     void Attack()
     {
-        Debug.Log("ATTACKING");
+        //Debug.Log("ATTACKING");
         //animator.SetBool("isAttacking", true);
         animator.SetTrigger("attack");
         canAttack = false;

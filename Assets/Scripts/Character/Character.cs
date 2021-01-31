@@ -44,11 +44,13 @@ namespace LonelyIsland.Characters
         [SerializeField] protected float DamageMultiplier = 1;
 
         [Header("Attack")]
+        [ReadOnly]
         [SerializeField] protected bool IsAttacking = false;
         [SerializeField] protected float GlobalCooldown = 1;
         [SerializeField] protected GameObject DamageTakenCountPrefab;
         [SerializeField] protected Vector3 PrefabOffset;
-        protected float globalCooldownPeriod = 0;
+        [ReadOnly]
+        [SerializeField] protected float globalCooldownPeriod = 0;
 
         protected bool hasDied = false;
         public bool IsDead() { return hasDied;  }
@@ -80,6 +82,8 @@ namespace LonelyIsland.Characters
             {
                 SetHealth(0);
             }
+
+            IsAttacking = globalCooldownPeriod > 0;
 
             if (health <= 0 && !hasDied)
             {
